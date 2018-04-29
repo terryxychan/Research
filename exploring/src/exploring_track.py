@@ -3,12 +3,18 @@ import rospy
 import time
 import string
 from exploring.msg import coordinates
+from exploring.msg import affordance
 
 def coordinate_gen():
     rospy.init_node('coordinate_gen',anonymous=True)
     pub = rospy.Publisher('/XYZR',coordinates, queue_size = 100)
+    aff_sub = rospy.Subscriber('/affordance',affordance,callback)
+    rate = rospy.Rate(10)
     rate = rospy.Rate(10)
     cd = coordinates()
+    # print "calling spin"
+    rospy.spin()
+    # print "Spinning"
     while not rospy.is_shutdown():
         input_command = raw_input("If you want to go to initial position, press i:")
         i_test = 'i'
@@ -43,14 +49,36 @@ def coordinate_gen():
                 cd.Rz = -2.23
                 print "Starting to search"
                 while (i < 5):
-                    cd.Y = -0.345 - i * 0.05
-                # print cd.Y
-                    rospy.loginfo(cd)
-                    pub.publish(cd)
-                    time.sleep(10)
-                    i = i + 1
-                    count = count + 1
-                    rate.sleep()
+                    print aff_flag
+                    if aff_flag == 0:
+                        cd.Y = -0.345 - i * 0.05
+                        print "Still going"
+                        rospy.loginfo(cd)
+                        pub.publish(cd)
+                        time.sleep(2)
+                        i = i + 1
+                        count = count + 1
+                        rate.sleep()
+                    else:
+                        cd.flag = 1
+                        cd.base = 0.00
+                        cd.shoulder = 1.95
+                        cd.elbow = 0.854
+                        cd.w1 = -2.47
+                        cd.w2 = 0.736
+                        cd.w3 = 0
+                        print "I hit something"
+                        rospy.loginfo(cd)
+                        pub.publish(cd)
+                        time.sleep(10)
+                        i = 5
+                        count = count + 1
+                        rate.sleep()
+
+def callback(msg):
+    aff_flag = msg.affordance
+    rospy.loginfo(aff_flag)
+
 if __name__ == '__main__':
     try:
         coordinate_gen()

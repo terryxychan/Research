@@ -6,7 +6,8 @@ from exploring.msg import coordinates
 
 def callback(msg):
     HOST = "192.168.1.3" # The remote host
-    PORT = 30002 # The sa        y_2 = -0.345 - j * 0.05
+    PORT = 30002
+
     # print "Starting Program"
     count = 0
 
