@@ -15,12 +15,6 @@ def action():
     rate = rospy.Rate(2)
     aff = affordance()
     while not rospy.is_shutdown():
-    # if flag == 1:
-    #     print 'found affordance'
-    #     pub.publish(affordance)
-    # else:
-    #     print 'No affordance'
-    #     pub.publish(affordance)
         rospy.loginfo(aff)
         pub.publish(aff)
         rate.sleep()
@@ -32,7 +26,9 @@ def callback(msg):
     # Receiving the data from the ft_sensor and determining if the affordance should be 0 or 1
     z_force = msg.Fz
     # rospy.loginfo(msg.Fz)
-    if z_force < -23:
+    if z_force < -61:
+        # This threshold comes from the data streaming of the ft ft_sensor
+        # Dependds on what the threshold you need
         affordance.affordance = 1
         # flag = 1
     else:
